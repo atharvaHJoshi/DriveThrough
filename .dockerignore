@@ -1,0 +1,16 @@
+.git
+.gitignore
+*.md
+.env
+.env.*
+!.env.example
+build/
+dist/
+vendor/
+tests/
+docs/
+docker/
+
+# Frontend: dependencies and build output are recreated inside the image.
+web/node_modules
+web/dist

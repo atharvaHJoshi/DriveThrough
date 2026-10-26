@@ -1,0 +1,103 @@
+name: drivethrough
+
+services:
+  postgres:
+    image: postgis/postgis:16-3.4
+    container_name: drivethrough-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-drivethrough}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-drivethrough_secret}
+      POSTGRES_DB: ${DB_NAME:-drivethrough}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-drivethrough} -d ${DB_NAME:-drivethrough}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: drivethrough-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      args:
+        VERSION: ${VERSION:-dev}
+    container_name: drivethrough-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      SERVER_PORT: 8080
+      SERVER_ENV: ${SERVER_ENV:-development}
+
+      # Host/port form for the local compose network. Swap in DATABASE_URL to
+      # point at a managed Postgres; it takes precedence when set.
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-drivethrough}
+      DB_PASSWORD: ${DB_PASSWORD:-drivethrough_secret}
+      DB_NAME: ${DB_NAME:-drivethrough}
+      DB_SSLMODE: ${DB_SSLMODE:-disable}
+      DB_RUN_MIGRATIONS: ${DB_RUN_MIGRATIONS:-true}
+      DATABASE_URL: ${DATABASE_URL:-}
+
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      REDIS_URL: ${REDIS_URL:-}
+      REDIS_TLS: ${REDIS_TLS:-false}
+
+      # Required. In production this must be >= 32 chars and not a default.
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-change-me}
+      JWT_ACCESS_EXPIRY: ${JWT_ACCESS_EXPIRY:-15m}
+      JWT_REFRESH_EXPIRY: ${JWT_REFRESH_EXPIRY:-168h}
+      OTP_EXPIRY: ${OTP_EXPIRY:-5m}
+      OTP_LENGTH: ${OTP_LENGTH:-6}
+
+      SMS_PROVIDER: ${SMS_PROVIDER:-log}
+      SMS_API_KEY: ${SMS_API_KEY:-}
+      SMS_BASE_URL: ${SMS_BASE_URL:-https://control.msg91.com/api/v5}
+
+      RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID:-}
+      RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET:-}
+      RAZORPAY_BASE_URL: ${RAZORPAY_BASE_URL:-https://api.razorpay.com/v1}
+
+      FCM_PROJECT_ID: ${FCM_PROJECT_ID:-}
+      FCM_SERVICE_ACCOUNT_KEY: ${FCM_SERVICE_ACCOUNT_KEY:-}
+      FCM_BASE_URL: ${FCM_BASE_URL:-https://fcm.googleapis.com}
+
+      GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY:-}
+
+      SERVER_ALLOWED_ORIGINS: ${SERVER_ALLOWED_ORIGINS:-*}
+      WS_ALLOWED_ORIGINS: ${WS_ALLOWED_ORIGINS:-*}
+
+      WORKERS_ENABLED: ${WORKERS_ENABLED:-true}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      LOG_FORMAT: ${LOG_FORMAT:-text}
+    ports:
+      - "${SERVER_PORT:-8080}:8080"
+
+volumes:
+  postgres_data:
+  redis_data:

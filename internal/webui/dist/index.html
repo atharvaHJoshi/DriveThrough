@@ -1,0 +1,21 @@
+<!doctype html>
+<!--
+  Placeholder shipped in the repo so `go build` can always satisfy the
+  //go:embed in ../webui.go. It is replaced by the real application bundle when
+  the frontend is built (`npm run build` in web/, or ./run.sh web).
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DriveThrough — UI not built</title>
+  </head>
+  <body style="font-family: system-ui, sans-serif; max-width: 40rem; margin: 4rem auto; padding: 0 1rem">
+    <h1>DriveThrough API is running</h1>
+    <p>The web interface has not been built into this binary yet.</p>
+    <p>
+      Build it with <code>cd web &amp;&amp; npm install &amp;&amp; npm run build</code>, then
+      rebuild the server, or run <code>./run.sh web</code> followed by <code>./run.sh run --build</code>.
+    </p>
+  </body>
+</html>

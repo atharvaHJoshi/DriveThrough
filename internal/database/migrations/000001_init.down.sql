@@ -1,0 +1,22 @@
+-- 000001_init.down.sql -- Rollback
+DROP TABLE IF EXISTS matching_offers;
+DROP TABLE IF EXISTS emergency_contacts;
+DROP TABLE IF EXISTS sos;
+DROP TABLE IF EXISTS incidents;
+DROP TABLE IF EXISTS device_tokens;
+DROP TABLE IF EXISTS notifications;
+DROP TABLE IF EXISTS driver_earnings;
+DROP TABLE IF EXISTS ratings;
+DROP TABLE IF EXISTS refunds;
+DROP TABLE IF EXISTS payments;
+DROP TABLE IF EXISTS vehicle_inspections;
+DROP TABLE IF EXISTS trip_locations;
+DROP TABLE IF EXISTS trips;
+DROP TABLE IF EXISTS booking_events;
+DROP TABLE IF EXISTS bookings;
+DROP TABLE IF EXISTS vehicles;
+DROP TABLE IF EXISTS driver_documents;
+DROP TABLE IF EXISTS drivers;
+DROP TABLE IF EXISTS users;
+DROP EXTENSION IF EXISTS postgis;
+DROP EXTENSION IF EXISTS pgcrypto;
