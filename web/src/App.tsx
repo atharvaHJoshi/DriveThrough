@@ -1,4 +1,4 @@
-import { Navigate, NavLink, Route, Routes, useNavigate, useParams } from 'react-router-dom'
+import { Navigate, NavLink, Route, Routes, useNavigate } from 'react-router-dom'
 import { useAuth } from './state/AuthContext'
 import { Loading } from './components/ui'
 import { LoginScreen } from './screens/LoginScreen'

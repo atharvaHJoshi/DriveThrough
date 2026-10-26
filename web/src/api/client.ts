@@ -17,7 +17,6 @@ import type {
   Booking,
   Driver,
   DriverDocument,
-  DriverEarning,
   EarningsSummary,
   EmergencyContact,
   EndTripResult,
